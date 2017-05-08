@@ -8,6 +8,9 @@ collection.
 */
 
 var request = require('request');
+var GITHUB_USER = violet-anima;
+var GITHUB_TOKEN = 2f90fe53427f7532dc48129e1045761f79207757;
+
 
 console.log('Welcome to the GitHub Avatar Downloader!!');
 
