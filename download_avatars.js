@@ -8,22 +8,27 @@ collection.
 */
 
 var request = require('request');
-var GITHUB_USER = violet-anima;
-var GITHUB_TOKEN = 2f90fe53427f7532dc48129e1045761f79207757;
+var GITHUB_USER = 'violet-anima';
+var GITHUB_TOKEN = '4b487cdc5c9222b32abecbe0e6a395f5f859de13';
+var requestURL = 'https://'+ GITHUB_USER + ':' + GITHUB_TOKEN + '@api.github.com/repos/' + repoOwner + '/' + repoName + '/contributors';
 
 
 console.log('Welcome to the GitHub Avatar Downloader!!');
 
-/*
+
 function getRepoContributors(repoOwner, repoName, cb) {
-  // This function will use the request library to programmatically fetch the list of
-  // contributors via HTTPS for the given repo.
+  // create endpoint following GitHub API at https://developer.github.com/v3/repos/#list-contributors
+  let endpoint = `@api.github.com/repos/${repoOwner}/${repoName}/contributors`;
+  let requestURL = `https://${process.env.GITHUB_USER}:${process.env.GITHUB_TOKEN}` + endpoint;
+
+  let options = {
+    url: requestURL,
+    headers: {
+      'User-Agent': 'GitHub Avatar Downloader - Student Project'
+    }
+  };
+
+  request.get(options, function (err, response, body) {
+    cb(err, JSON.parse(body));
+  });
 }
-*/
-
-getRepoContributors("jquery", "jquery", function(err, result) {
-  console.log("Errors:", err);
-  console.log("Result:", result);
-});
-
-
