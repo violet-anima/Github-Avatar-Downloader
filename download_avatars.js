@@ -32,3 +32,20 @@ function getRepoContributors(repoOwner, repoName, cb) {
     cb(err, JSON.parse(body));
   });
 }
+
+
+//HTTP GET request to download each profile image
+function downloadImageByURL(url, filePath) {
+  request.get(url)
+    .on('error', function(error){
+      console.log('Error has been made!');
+      throw error;
+    })
+    .on('response', function(response){
+      console.log('Image is downloading.');
+    })
+    .pipe(fs.createWriteStream(filePath));
+  }
+}
+
+
