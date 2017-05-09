@@ -10,7 +10,23 @@ collection.
 var request = require('request');
 var GITHUB_USER = 'violet-anima';
 var GITHUB_TOKEN = '4b487cdc5c9222b32abecbe0e6a395f5f859de13';
-var requestURL = 'https://'+ GITHUB_USER + ':' + GITHUB_TOKEN + '@api.github.com/repos/' + repoOwner + '/' + repoName + '/contributors';
+var repoOwner = process.argv[2];
+var repoName = process.argv[3];
+
+
+if (!repoOwner || !repoName) {
+  throw 'Please provide a repo owner and repo name.  Eg: e.g "node download_avatar.js owner repo"';
+}
+
+  var requestURL = 'https://' + GITHUB_USER + ':' + GITHUB_TOKEN + '@api.github.com/repos/' + repoOwner + '/' + repoName + '/contributors';
+  var options = {
+    url: requestURL,
+    headers: {
+      'User-Agent': 'violet-anima'
+    }
+  };
+
+
 
 
 console.log('Welcome to the GitHub Avatar Downloader!!');
@@ -18,10 +34,10 @@ console.log('Welcome to the GitHub Avatar Downloader!!');
 
 function getRepoContributors(repoOwner, repoName, cb) {
   // create endpoint following GitHub API at https://developer.github.com/v3/repos/#list-contributors
-  let endpoint = `@api.github.com/repos/${repoOwner}/${repoName}/contributors`;
-  let requestURL = `https://${process.env.GITHUB_USER}:${process.env.GITHUB_TOKEN}` + endpoint;
+  var endpoint = `@api.github.com/repos/${repoOwner}/${repoName}/contributors`;
+  var requestURL = `https://${process.env.GITHUB_USER}:${process.env.GITHUB_TOKEN}` + endpoint;
 
-  let options = {
+  var options = {
     url: requestURL,
     headers: {
       'User-Agent': 'GitHub Avatar Downloader - Student Project'
