@@ -1,67 +1,64 @@
-
-/*
-Using the request package, you will fetch the list of contributors as a JSON string from the GitHub API's
-contributors endpoint. Upon receiving the results, your function will invoke a callback function with
-the results. This callback function will loop over and print out the avatar_url for each object in the
-collection.
-
-*/
-
 var request = require('request');
-var GITHUB_USER = 'violet-anima';
-var GITHUB_TOKEN = '4b487cdc5c9222b32abecbe0e6a395f5f859de13';
+var GITHUB_USER = "violet-anima";
+var GITHUB_TOKEN = "4b487cdc5c9222b32abecbe0e6a395f5f859de13";
 var repoOwner = process.argv[2];
 var repoName = process.argv[3];
-
-
-if (!repoOwner || !repoName) {
-  throw 'Please provide a repo owner and repo name.  Eg: e.g "node download_avatar.js owner repo"';
-}
-
-  var requestURL = 'https://' + GITHUB_USER + ':' + GITHUB_TOKEN + '@api.github.com/repos/' + repoOwner + '/' + repoName + '/contributors';
-  var options = {
-    url: requestURL,
-    headers: {
-      'User-Agent': 'violet-anima'
-    }
-  };
-
-
 
 
 console.log('Welcome to the GitHub Avatar Downloader!!');
 
 
-function getRepoContributors(repoOwner, repoName, cb) {
-  // create endpoint following GitHub API at https://developer.github.com/v3/repos/#list-contributors
-  var endpoint = `@api.github.com/repos/${repoOwner}/${repoName}/contributors`;
-  var requestURL = `https://${process.env.GITHUB_USER}:${process.env.GITHUB_TOKEN}` + endpoint;
+if (!repoOwner || !repoName) {
+  throw 'Please provide a repo owner and repo name.  Eg: e.g "node download_avatar.js violet-anima finstagram"';
+} else {
 
-  var options = {
-    url: requestURL,
-    headers: {
-      'User-Agent': 'GitHub Avatar Downloader - Student Project'
-    }
-  };
+    // Github API endpoint
+  function getRepoContributors(repoOwner, repoName, cb) {
+    var requestURL = 'https://'+ GITHUB_USER + ':' + GITHUB_TOKEN +
+    '@api.github.com/repos/' + repoOwner + '/' + repoName + '/contributors';
 
-  request.get(options, function (err, response, body) {
-    cb(err, JSON.parse(body));
-  });
-}
-
-
-//HTTP GET request to download each profile image
-function downloadImageByURL(url, filePath) {
-  request.get(url)
-    .on('error', function(error){
-      console.log('Error has been made!');
-      throw error;
-    })
-    .on('response', function(response){
-      console.log('Image is downloading.');
-    })
-    .pipe(fs.createWriteStream(filePath));
+    // HTTP request to get contributors and User-Agent forbidden request bypass
+    request.get({
+      url: requestURL,
+      headers: {
+        "User-Agent": "GitHub Avatar Downloader - Student Project"
+      }
+    }, cb)
   }
+
+
+  function printResponse(err, res, body) {
+    if(err) {
+      console.log("Error has been made!", error);
+    }
+    var parsedResults = JSON.parse(body);
+
+    // targeting avatar urls to save to avatar folder
+    for (var arr in parsedResults) {
+      var avatarUrl = parsedResults[arr]["avatar_url"];
+      downloadImageByURL(avatarUrl, `avatar/${arr}.jpg`);
+    }
+  }
+
+  var fs = require("fs");
+
+  function downloadImageByURL(url, filePath) {
+
+    // HTTP request to get images
+    request.get(url)
+      .on("error", function(err) {
+        console.log("Error has been made!");
+        throw err;
+      })
+      .on("response", function (response) {
+        console.log("Image(s) downloading.");
+      })
+      .on("end", function (){
+        console.log("Download has ended.")
+      })
+      .pipe(fs.createWriteStream(filePath));
+    }
+
+ getRepoContributors(repoOwner, repoName, printResponse);
+
 }
-
-
